@@ -12,7 +12,7 @@
 @endisset
 <br>
 <div>
-    <!--dd($tasks)-->
+    <!-- dd($tasks) -->
     @if (is_array($tasks) && count($tasks))
         @foreach ($tasks as $task)
             <div>
