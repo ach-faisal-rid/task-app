@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Response;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,8 +82,14 @@ Route::get('/tasks', function () use($tasks) {
     );
 })->name('tasks.index');
 
-Route::get('/{id}', function ($id) {
-    return 'one single task';
+Route::get('/tasks/{id}', function ($id) use ($tasks) {
+    // $task = collect($tasks)->first(fn ($task) => $task->id === $id);
+    // $task = collect($tasks)->first('id', $id);
+    $task = collect($tasks)->where('id', $id)->first();
+    if(!$task) {
+        abort(Response::HTTP_NOT_FOUND);
+    }
+    return view('home/show', ['task'=> $task]);
 })->name('tasks.show');
 
 Route::fallback(function (){

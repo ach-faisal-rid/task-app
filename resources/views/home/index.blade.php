@@ -1,3 +1,8 @@
+@extends('layouts.app')
+
+@section('title', 'dashboard')
+@section('content')
+
 <div>
     hello iam blade template !
 </div>
@@ -22,3 +27,4 @@
         <div>There are no tasks!</div>
     @endif
 </div>
+@endsection
