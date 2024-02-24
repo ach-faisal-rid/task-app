@@ -23,6 +23,7 @@ Route::get('/', function(){
 });
 Route::get('/tasks', function () {
     return view('home/index', [
+        'name' => 'faisal',
         'tasks'=> \App\Models\Task::latest()->get()
     ]
     );

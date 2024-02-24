@@ -13,18 +13,16 @@
 <br>
 <div>
     <!-- dd($tasks) -->
-    @if (is_array($tasks) && count($tasks))
-        @foreach ($tasks as $task)
-            <div>
-                <a href="{{route('tasks.show',
-                    ['id' => $task->id])}}"
-                >
-                    {{$task->title}}
+    @forelse ($tasks as $task)
+        <div>
+            <a
+                href="{{ route('tasks.show', $task->id) }}"
+            >
+                {{ $task->title }}
             </a>
-            </div>
-        @endforeach()
-    @else
+        </div>
+    @empty
         <div>There are no tasks!</div>
-    @endif
+    @endforelse
 </div>
 @endsection
