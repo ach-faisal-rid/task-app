@@ -1,7 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,7 @@ Route::get('/welcome', function () {
 Route::get('/', function(){
     return redirect()->route('tasks.index');
 });
+
 Route::get('/tasks', function () {
     return view('home/index', [
         'name' => 'faisal',
@@ -35,6 +37,13 @@ Route::get('/tasks/{id}', function ($id) {
         ['task'=> \App\Models\Task::findorFail($id)]
     );
 })->name('tasks.show');
+
+Route::view('/tasks/create', 'home/create')
+->name('tasks.create');
+
+Route::post('/tasks', function (Request $request) {
+    dd($request->all());
+})->name('tasks.store');
 
 Route::fallback(function (){
     return 'still got somewhere';
