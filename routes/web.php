@@ -1,5 +1,5 @@
 <?php
-
+use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
@@ -24,22 +24,21 @@ Route::get('/', function(){
 });
 
 Route::get('/tasks', function () {
-    return view('home/index', [
+    return view('tasks/index', [
         'name' => 'faisal',
-        'tasks'=> \App\Models\Task::latest()->get()
+        'tasks'=> Task::latest()->get()
     ]
     );
 })->name('tasks.index');
 
 Route::get('/tasks/{id}', function ($id) {
 
-    return view('home/show',
-        ['task'=> \App\Models\Task::findorFail($id)]
+    return view('tasks/show',
+        ['task'=> Task::findorFail($id)]
     );
 })->name('tasks.show');
 
-Route::view('/tasks/create', 'home/create')
-->name('tasks.create');
+Route::view('/tasks/create', 'tasks.create')->name('tasks.create');
 
 Route::post('/tasks', function (Request $request) {
     dd($request->all());
