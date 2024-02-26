@@ -51,6 +51,12 @@
     </div>
 
     <div>
+        <label for="completed">completed</label>
+        <input type="number" name="completed" id="completed"
+        value="{{ $task->completed ?? old('completed') }}" />
+    </div>
+
+    <div>
         <button type="submit">
             @isset($task)
                 Update Task

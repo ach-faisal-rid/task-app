@@ -22,15 +22,12 @@ Route::get('/welcome', function () {
     return view('welcome');
 });
 
-Route::resource('tasks', TaskController::class);
+route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
+Route::resource('/tasks', TaskController::class);
 
-Route::put('tasks/{task}/change-complete',
+Route::put('/tasks/{task}/change-complete',
 [TaskController::class, 'changeComplete'])
     ->name('tasks.change-complete');
-
-Route::fallback(function (){
-    return 'still got somewhere';
-});
 
 /** get */
 /** post */

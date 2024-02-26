@@ -17,6 +17,7 @@ class TaskRequest extends FormRequest
             "title" => "required|max:255",
             "description" => "required",
             "long_description" => "required",
+            "completed" => "required|in:0,1" // Only allow 0 or 1
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TaskRequest;
+use Illuminate\Http\Request;
 use App\Models\Task;
 
 class TaskController extends Controller
@@ -10,10 +11,15 @@ class TaskController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $name = 'faisal';
         $tasks = Task::latest()->paginate(10);
+
+        if ($request->is('api/*')) {
+            return response()->json($tasks);
+        }
+
+        $name = 'faisal';
         return view('tasks.index', compact('name', 'tasks'));
     }
 
@@ -30,12 +36,18 @@ class TaskController extends Controller
      */
     public function store(TaskRequest $request)
     {
-        // dd($request->all());
+        // The validation has already been performed by the 'validated' method
+        $validatedData = $request->validated();
 
-        $task = Task::create($request->validated());
+        // Create the task
+        $task = Task::create($validatedData);
 
-        $task->save();
+        // Return JSON response for API
+        if ($request->is('api/*')) {
+            return response()->json($task, 201);
+        }
 
+        // For web requests, redirect to the show page
         return redirect()->route('tasks.show', ['task' => $task->id]);
     }
 
@@ -65,7 +77,10 @@ class TaskController extends Controller
         // dd($request->all());
 
         $task->update($request->validated());
-        $task->save();
+
+        if ($request->is('api/*')) {
+            return response()->json($task, 200);
+        }
 
         return redirect()->route('tasks.show', ['task' => $task->id]);
     }
@@ -73,19 +88,25 @@ class TaskController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Task $task)
+    public function destroy(Request $request, Task $task)
     {
         $task->delete();
 
-        return redirect()->route('tasks.index')
-        ->with('success', 'task deleted successfully!');
+        if ($request->is('api/*')) {
+            return response()->json(['message' => 'Task deleted successfully']);
+        }
+
+        return redirect()->route('tasks.index')->with('success', 'Task deleted successfully!');
     }
 
     // custom
-    public function changeComplete(Task $task) {
+    public function changeComplete(Request $request, Task $task) {
         $task->toggleComplete();
 
-        return redirect()->back()
-        ->with('success', 'Task updated successfully!');
+        if ($request->is('api/*')) {
+            return response()->json($task, 200);
+        }
+
+        return redirect()->back()->with('success', 'Task updated successfully!');
     }
 }
