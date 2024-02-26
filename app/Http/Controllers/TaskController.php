@@ -32,11 +32,6 @@ class TaskController extends Controller
     public function store(TaskRequest $request)
     {
         // dd($request->all());
-        // $data = $request->validated();
-        // $task = new Task();
-        // $task->title = $data['title'];
-        // $task->description = $data['description'];
-        // $task->long_description = $data['long_description'];
 
         $task = Task::create($request->validated());
 
@@ -70,13 +65,6 @@ class TaskController extends Controller
     {
         // dd($request->all());
 
-        // $data = $request->validated();
-
-        // $task = Task::findOrFail($id);
-        // $task->title = $data['title'];
-        // $task->description = $data['description'];
-        // $task->long_description = $data['long_description'];
-
         $task->update($request->validated());
         $task->save();
 
@@ -86,8 +74,11 @@ class TaskController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Task $task)
     {
-        //
+        $task->delete();
+
+        return redirect()->route('tasks.index')
+        ->with('success', 'task deleted successfully!');
     }
 }
