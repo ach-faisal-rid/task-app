@@ -23,6 +23,7 @@ Route::get('/welcome', function () {
 });
 
 Route::resource('tasks', TaskController::class);
+route::get('/tasks', [TaskController::class, 'index']);
 
 Route::fallback(function (){
     return 'still got somewhere';

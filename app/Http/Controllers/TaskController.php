@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TaskRequest;
 use App\Models\Task;
-use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
@@ -14,7 +13,7 @@ class TaskController extends Controller
     public function index()
     {
         $name = 'faisal';
-        $tasks = Task::latest()->get();
+        $tasks = Task::latest()->paginate(10);
         return view('tasks.index', compact('name', 'tasks'));
     }
 
