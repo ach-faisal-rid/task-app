@@ -10,4 +10,9 @@ class Task extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+
+    public function toggleConplete() {
+        $this->completed = !$this->completed;
+        $this->save();
+    }
 }
