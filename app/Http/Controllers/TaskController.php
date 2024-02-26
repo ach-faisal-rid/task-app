@@ -32,11 +32,13 @@ class TaskController extends Controller
     public function store(TaskRequest $request)
     {
         // dd($request->all());
-        $data = $request->validated();
-        $task = new Task();
-        $task->title = $data['title'];
-        $task->description = $data['description'];
-        $task->long_description = $data['long_description'];
+        // $data = $request->validated();
+        // $task = new Task();
+        // $task->title = $data['title'];
+        // $task->description = $data['description'];
+        // $task->long_description = $data['long_description'];
+
+        $task = Task::create($request->validated());
 
         $task->save();
 
@@ -64,17 +66,18 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(TaskRequest $request, string $id)
+    public function update(TaskRequest $request, Task $task)
     {
         // dd($request->all());
 
-        $data = $request->validated();
+        // $data = $request->validated();
 
-        $task = Task::findOrFail($id);
-        $task->title = $data['title'];
-        $task->description = $data['description'];
-        $task->long_description = $data['long_description'];
+        // $task = Task::findOrFail($id);
+        // $task->title = $data['title'];
+        // $task->description = $data['description'];
+        // $task->long_description = $data['long_description'];
 
+        $task->update($request->validated());
         $task->save();
 
         return redirect()->route('tasks.show', ['task' => $task->id]);
