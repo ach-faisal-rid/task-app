@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TaskRequest;
 use App\Models\Task;
 use Illuminate\Http\Request;
 
@@ -28,16 +29,10 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(TaskRequest $request)
     {
         // dd($request->all());
-
-        $data = $request->validate([
-            'title' => 'required|max:255',
-            'description' => 'required',
-            'long_description' => 'required',
-        ]);
-
+        $data = $request->validated();
         $task = new Task();
         $task->title = $data['title'];
         $task->description = $data['description'];
@@ -69,15 +64,11 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(TaskRequest $request, string $id)
     {
         // dd($request->all());
 
-        $data = $request->validate([
-            'title' => 'required|max:255',
-            'description' => 'required',
-            'long_description' => 'required',
-        ]);
+        $data = $request->validated();
 
         $task = Task::findOrFail($id);
         $task->title = $data['title'];
