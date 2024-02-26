@@ -5,6 +5,7 @@
 @section('content')
   <form method="POST" action="{{ route('tasks.store') }}">
     @csrf
+
     <div>
       <label for="title">
         Title
