@@ -13,18 +13,18 @@
 <br>
 <div>
     <!-- dd($tasks) -->
-    @forelse ($tasks as $task)
-        <div>
-            <a href="{{ route('tasks.show', $task->id) }}">
-                {{ $task->title }}
-            </a>
-        </div>
+    @forelse ($paginator as $task)
+    <div>
+        <a href="{{ route('tasks.show', $task['id']) }}">
+            {{ $task['title'] }}
+        </a>
+    </div>
     @empty
         <div>There are no tasks!</div>
     @endforelse
 
-    @if ($tasks->count())
-        {{ $tasks->links() }}
+    @if ($paginator->total() > 0)
+        {{ $paginator->links() }}
     @endif
 </div>
 @endsection
