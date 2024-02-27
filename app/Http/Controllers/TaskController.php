@@ -8,32 +8,40 @@ use App\Models\Task;
 
 class TaskController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
+        // Mendapatkan semua tugas dari database
         $tasks = Task::latest()->paginate(10);
 
-        if ($request->is('api/*')) {
-            return response()->json($tasks);
+        if ($request->is('api/*') || $request->wantsJson()) {
+            // Jika request berasal dari API, mengembalikan respons JSON yang dioptimalkan
+            return response()->json([
+                'tasks' => $tasks->items(),
+                'pagination' => [
+                    'current_page' => $tasks->currentPage(),
+                    'last_page' => $tasks->lastPage(),
+                    'per_page' => $tasks->perPage(),
+                    'total' => $tasks->total(),
+                ],
+                'links' => [
+                    'first_page_url' => $tasks->url(1),
+                    'last_page_url' => $tasks->url($tasks->lastPage()),
+                    'next_page_url' => $tasks->nextPageUrl(),
+                    'prev_page_url' => $tasks->previousPageUrl(),
+                ],
+            ]);
         }
 
         $name = 'faisal';
+        // Mengembalikan tampilan dengan data tugas
         return view('tasks.index', compact('name', 'tasks'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('tasks.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(TaskRequest $request)
     {
         // The validation has already been performed by the 'validated' method
@@ -51,52 +59,44 @@ class TaskController extends Controller
         return redirect()->route('tasks.show', ['task' => $task->id]);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $task = Task::findOrFail($id);
         return view('tasks.show', compact('task'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $task = Task::findOrFail($id);
         return view('tasks.edit', compact('task'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(TaskRequest $request, Task $task)
     {
         // dd($request->all());
 
-        $task->update($request->validated());
+        // $task->update($request->validated());
 
-        if ($request->is('api/*')) {
-            return response()->json($task, 200);
-        }
+        // if ($request->is('api/*')) {
+        //     return response()->json($task, 200);
+        // }
 
-        return redirect()->route('tasks.show', ['task' => $task->id]);
+        // return redirect()->route('tasks.show', ['task' => $task->id]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Request $request, Task $task)
     {
-        $task->delete();
+        try {
+            $task->delete();
 
-        if ($request->is('api/*')) {
-            return response()->json(['message' => 'Task deleted successfully']);
+            if ($request->is('api/*')) {
+                return response()->json(['message' => 'Task deleted successfully']);
+            }
+
+            return redirect()->route('tasks.index')->with('success', 'Task deleted successfully!');
+        } catch (\Exception $e) {
+            return redirect()->route('tasks.index')->with('error', 'Error deleting the task');
         }
-
-        return redirect()->route('tasks.index')->with('success', 'Task deleted successfully!');
     }
 
     // custom

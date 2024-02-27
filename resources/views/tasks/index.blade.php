@@ -15,9 +15,7 @@
     <!-- dd($tasks) -->
     @forelse ($tasks as $task)
         <div>
-            <a
-                href="{{ route('tasks.show', $task->id) }}"
-            >
+            <a href="{{ route('tasks.show', $task->id) }}">
                 {{ $task->title }}
             </a>
         </div>

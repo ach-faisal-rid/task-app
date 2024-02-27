@@ -23,7 +23,7 @@
 
     <div>
         <form action="{{
-            route('tasks.change-complete', ['task' => $task])
+            route('tasks.complete', ['task' => $task])
         }}">
         @csrf
         @method('PUT')
