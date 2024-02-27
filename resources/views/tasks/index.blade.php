@@ -12,8 +12,9 @@
 @endisset
 <br>
 <div>
+    
     <!-- dd($tasks) -->
-    @forelse ($paginator as $task)
+    @forelse ($tasks as $task)
     <div>
         <a href="{{ route('tasks.show', $task['id']) }}">
             {{ $task['title'] }}
@@ -23,8 +24,8 @@
         <div>There are no tasks!</div>
     @endforelse
 
-    @if ($paginator->total() > 0)
-        {{ $paginator->links() }}
+    @if ($tasks->total() > 0)
+        {{ $tasks->links() }}
     @endif
 </div>
 @endsection

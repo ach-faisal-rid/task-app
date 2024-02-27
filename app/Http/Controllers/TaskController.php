@@ -2,67 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Http;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use App\Http\Requests\TaskRequest;
+
+use Illuminate\Http\Response; // For clarity
 
 use App\Models\Task;
-use App\Http\Requests\TaskRequest;
 
 class TaskController extends Controller
 {
 
     public function index(Request $request)
     {
-        // Mendapatkan semua tugas dari database
-        $localTasks = Task::latest()->select('id', 'title')->paginate(10);
-
-        // Mendapatkan semua tugas dari REST API
-        $response = Http::timeout(60)->get('http://task-app.test/api/tasks');
-        $apiTasks = $response->json();
-
-        // Check if $apiTasks['tasks'] is set and not null, otherwise use an empty array
-        $apiTasksArray = $apiTasks['tasks'] ?? [];
-
-        // Gabungkan data dari database dan API
-        $mergedTasks = array_merge($localTasks->items(), $apiTasksArray);
-
-        // Buat objek LengthAwarePaginator dari hasil gabungan
-        $perPage = 10; // Sesuaikan dengan jumlah tugas per halaman yang diinginkan
-        $currentPage = request()->get('page', 1); // Dapatkan nomor halaman saat ini dari URL
-
-        $paginator = new LengthAwarePaginator(
-            array_slice($mergedTasks, ($currentPage - 1) * $perPage, $perPage),
-            count($mergedTasks),
-            $perPage,
-            $currentPage
-        );
-
-        $paginator->withPath(route('tasks.index')); // Sesuaikan dengan nama rute halaman tugas Anda
-
-        // Jika request berasal dari API, kembalikan respons JSON yang dioptimalkan
-        if ($request->is('api/*') || $request->wantsJson()) {
-            return response()->json([
-                'tasks' => $paginator->items(),
-                'pagination' => [
-                    'current_page' => $paginator->currentPage(),
-                    'last_page' => $paginator->lastPage(),
-                    'per_page' => $paginator->perPage(),
-                    'total' => $paginator->total(),
-                ],
-                'links' => [
-                    'first_page_url' => $paginator->url(1),
-                    'last_page_url' => $paginator->url($paginator->lastPage()),
-                    'next_page_url' => $paginator->nextPageUrl(),
-                    'prev_page_url' => $paginator->previousPageUrl(),
-                ],
-            ]);
-        }
-
-        // Jika request bukan dari API, tampilkan halaman web dengan data tugas
-        $name = 'Faisal';
-
-        return view('tasks.index', compact('name', 'paginator'));
+        $data = Task::orderBy('title', 'ASC')->get();
+        return response()->json([
+            'status' => true,
+            'message' => 'Data Ditemukan',
+            'data' => $data
+        ], 200);
     }
 
     public function create()
@@ -70,27 +28,58 @@ class TaskController extends Controller
         return view('tasks.create');
     }
 
-    public function store(TaskRequest $request)
+    public function store(Request $request)
     {
-        // The validation has already been performed by the 'validated' method
-        $validatedData = $request->validated();
+        $dataTask = new Task;
 
-        // Create the task
-        $task = Task::create($validatedData);
+        $rules = [
+            'title' => 'required|string|max:255', // Specify a maximum length for title
+            'description' => 'required|string',
+            'long_description' => 'required|string',
+            'completed' => 'required|boolean', // Ensure completed is a boolean
+        ];
 
-        // Return JSON response for API
-        if ($request->is('api/*')) {
-            return response()->json($task, 201);
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            // Return a more specific error message with validation details
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation failed: ' . $validator->messages()->first(),
+                'data' => $validator->errors()->toArray()
+            ], 422); // Set appropriate HTTP status code for validation errors
         }
 
-        // For web requests, redirect to the show page
-        return redirect()->route('tasks.show', ['task' => $task->id]);
+        $dataTask->title = $request->title;
+        $dataTask->description = $request->description;
+        $dataTask->long_description = $request->long_description;
+        $dataTask->completed = $request->completed;
+
+        $dataTask->save();
+
+        // Return a success response with the created task data
+        return response()->json([
+            'status' => true,
+            'message' => 'Task created successfully!',
+            'data' => $dataTask
+        ], 201); // Use HTTP status code 201 for resource creation
     }
 
     public function show(string $id)
     {
-        $task = Task::findOrFail($id);
-        return view('tasks.show', compact('task'));
+        $data = Task::find($id);
+        if($data) {
+            return response()->json([
+                'status' => true,
+                'message' => 'Data Ditemukan',
+                'data' => $data
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data tidak ditemukan'
+            ], 400);
+        }
     }
 
     public function edit(string $id)
@@ -99,42 +88,90 @@ class TaskController extends Controller
         return view('tasks.edit', compact('task'));
     }
 
-    public function update(TaskRequest $request, Task $task)
+    public function update(Request $request, string $id)
     {
         // dd($request->all());
 
-        // $task->update($request->validated());
+        $dataTask = Task::findOrFail($id);
+        if(!$dataTask){
+            return response()->json([
+                'status' => false,
+                'message' => 'Data tidak ditemukan',
+            ], 400);
+        }
 
-        // if ($request->is('api/*')) {
-        //     return response()->json($task, 200);
-        // }
+        $rules = [
+            'title' => 'required|string|max:255', // Specify a maximum length for title
+            'description' => 'required|string',
+            'long_description' => 'required|string',
+            'completed' => 'required|boolean', // Ensure completed is a boolean
+        ];
 
-        // return redirect()->route('tasks.show', ['task' => $task->id]);
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            // Return a more specific error message with validation details
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation failed: ' . $validator->messages()->first(),
+                'data' => $validator->errors()->toArray()
+            ], 422); // Set appropriate HTTP status code for validation errors
+        }
+
+        $dataTask->title = $request->title;
+        $dataTask->description = $request->description;
+        $dataTask->long_description = $request->long_description;
+        $dataTask->completed = $request->completed;
+
+        $dataTask->save();
+
+        // Create and save the task with mass assignment for efficiency
+        //$task = Task::create($request->all());
+
+        // Return a success response with the created task data
+        return response()->json([
+            'status' => true,
+            'message' => 'Task updated successfully!',
+            'data' => $dataTask
+        ], 201); // Use HTTP status code 201 for resource creation
     }
 
-    public function destroy(Request $request, Task $task)
+    public function destroy($id)
     {
+        if (!is_numeric($id)) {
+            return response()->json([
+                'status' => false,
+                'message' => "ID task harus berupa angka.",
+            ], 400);
+        }
+
+        $dataTask = Task::findOrFail($id);
+
+        if (!$dataTask) {
+            return response()->json([
+                'status' => false,
+                'message' => "Data task dengan ID {$id} tidak ditemukan.",
+            ], 400);
+        }
+
         try {
-            $task->delete();
+            $dataTask->delete();
 
-            if ($request->is('api/*')) {
-                return response()->json(['message' => 'Task deleted successfully']);
-            }
-
-            return redirect()->route('tasks.index')->with('success', 'Task deleted successfully!');
+            return response()->json([
+                'status' => true,
+                'message' => 'Task berhasil dihapus!',
+            ], 200); // Use 200 for successful deletion
         } catch (\Exception $e) {
-            return redirect()->route('tasks.index')->with('error', 'Error deleting the task');
+            // Handle potential deletion errors
+            return response()->json([
+                'status' => false,
+                'message' => "Gagal menghapus task: {$e->getMessage()}",
+            ], 500); // Use 500 for internal server errors
         }
     }
 
     // custom
     public function changeComplete(Request $request, Task $task) {
-        $task->toggleComplete();
-
-        if ($request->is('api/*')) {
-            return response()->json($task, 200);
-        }
-
-        return redirect()->back()->with('success', 'Task updated successfully!');
+        // masih belum dibuat
     }
 }
