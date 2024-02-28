@@ -14,10 +14,26 @@ class TaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "title" => "required|max:255",
-            "description" => "required",
-            "long_description" => "required",
-            "completed" => "required|in:0,1" // Only allow 0 or 1
+            'title' => 'required|unique:tasks',
+            'description' => 'required',
+            'long_description' => 'required',
+            'completed' => 'required|in:0,1',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'title.required' => 'Title harus diisi.',
+            'title.string' => 'Title harus berupa string.',
+            'title.max' => 'Title tidak boleh lebih dari :max karakter.',
+            'title.unique' => 'Title sudah ada.',
+            'description.required' => 'Deskripsi harus diisi.',
+            'description.string' => 'Deskripsi harus berupa string.',
+            'long_description.required' => 'Long Deskripsi harus diisi.',
+            'long_description.string' => 'Long Deskripsi harus berupa string.',
+            'completed.required' => 'Completed harus diisi.',
+            'completed.boolean' => 'Completed harus berupa boolean.',
         ];
     }
 }

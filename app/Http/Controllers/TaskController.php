@@ -6,16 +6,23 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Http\Requests\TaskRequest;
 
-use Illuminate\Http\Response; // For clarity
-
 use App\Models\Task;
 
 class TaskController extends Controller
 {
 
-    public function index(Request $request)
+    public function index()
     {
         $data = Task::orderBy('title', 'ASC')->get();
+
+        if ($data->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data Tidak Ditemukan',
+                'data' => []
+            ], 404);
+        }
+
         return response()->json([
             'status' => true,
             'message' => 'Data Ditemukan',
@@ -138,13 +145,6 @@ class TaskController extends Controller
 
     public function destroy($id)
     {
-        if (!is_numeric($id)) {
-            return response()->json([
-                'status' => false,
-                'message' => "ID task harus berupa angka.",
-            ], 400);
-        }
-
         $dataTask = Task::findOrFail($id);
 
         if (!$dataTask) {
@@ -171,7 +171,7 @@ class TaskController extends Controller
     }
 
     // custom
-    public function changeComplete(Request $request, Task $task) {
+    public function Complete(Request $request, Task $task) {
         // masih belum dibuat
     }
 }

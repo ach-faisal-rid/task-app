@@ -37,6 +37,6 @@ Route::get('/welcome', function () {
 // Route::patch('/tasks/{task}/complete', [TaskController::class, 'changeComplete'])
 //     ->name('tasks.complete');
 
-Route::fallback(function () {
-    return redirect('/tasks');
-});
+// Route::fallback(function () {
+//     return redirect('/tasks');
+// });
