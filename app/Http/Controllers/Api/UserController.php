@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -60,16 +61,32 @@ class UserController extends Controller
     public function login(Request $request)
     {
         // Validasi input
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        try {
+            // Validasi input
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required',
+            ], [
+                'email.required' => 'Email harus diisi.',
+                'password.required' => 'Password harus diisi.',
+            ]);
+        } catch (ValidationException $e) {
+            // Tangani error validasi dan berikan respons dengan status 422 Unprocessable Entity
+            return response()->json(['errors' => $e->errors()], 422);
+        }
 
         // Cek login
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            // Berhasil login, dapatkan informasi pengguna
+            $user = auth()->user();
+
             // Berhasil login, generate token
             $token = auth()->user()->createToken('auth_token')->plainTextToken;
-            return response()->json(['token' => $token], 200);
+
+            return response()->json([
+                'data' => $user,
+                'token' => $token
+            ], 200);
         }
 
         // Gagal login
@@ -78,8 +95,20 @@ class UserController extends Controller
 
     public function currentUser()
     {
-        return response()->json(auth()->user(), 200);
+        $user = auth()->user();
+
+        if ($user) {
+            return response()->json([
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                // tambahkan informasi lain jika diperlukan
+            ], 200);
+        } else {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
     }
+
 
     public function changePassword(Request $request)
     {

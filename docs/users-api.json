@@ -1,0 +1,121 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "User Management API",
+      "description": "API untuk pengelolaan pengguna",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:8000"
+      }
+    ],
+    "paths": {
+      "/users": {
+        "get": {
+          "summary": "Mendapatkan daftar semua pengguna",
+          "responses": {
+            "200": {
+              "description": "Sukses mendapatkan daftar pengguna",
+              "content": {
+                "application/json": {
+                  "example": [
+                    {"id": 1, "name": "John Doe", "email": "john@example.com"},
+                    {"id": 2, "name": "Jane Doe", "email": "jane@example.com"}
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "summary": "Membuat pengguna baru",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "example": {"name": "New User", "email": "newuser@example.com"}
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Pengguna berhasil dibuat",
+              "content": {
+                "application/json": {
+                  "example": {"id": 3, "name": "New User", "email": "newuser@example.com"}
+                }
+              }
+            }
+          }
+        }
+      },
+      "/users/{id}": {
+        "get": {
+          "summary": "Mendapatkan informasi pengguna berdasarkan ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "ID pengguna",
+              "schema": {"type": "integer"}
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Sukses mendapatkan informasi pengguna",
+              "content": {
+                "application/json": {
+                  "example": {"id": 1, "name": "John Doe", "email": "john@example.com"}
+                }
+              }
+            }
+          }
+        },
+        "put": {
+          "summary": "Memperbarui informasi pengguna berdasarkan ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "ID pengguna",
+              "schema": {"type": "integer"}
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "example": {"name": "Updated User", "email": "updateduser@example.com"}
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Sukses memperbarui informasi pengguna",
+              "content": {
+                "application/json": {
+                  "example": {"id": 1, "name": "Updated User", "email": "updateduser@example.com"}
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "summary": "Menghapus pengguna berdasarkan ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "ID pengguna",
+              "schema": {"type": "integer"}
+            }
+          ],
+          "responses": {"204": {"description": "Sukses menghapus pengguna"}}
+        }
+      }
+    }
+  }

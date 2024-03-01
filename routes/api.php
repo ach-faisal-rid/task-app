@@ -23,13 +23,15 @@ Route::post('/register', [UserController::class, 'register']);
 // Login
 Route::post('/login', [UserController::class, 'login']);
 
-
 // Informasi Pengguna Saat Ini
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [UserController::class, 'currentUser']);
 
     // Penggantian Kata Sandi
     Route::post('/change-password', [UserController::class, 'changePassword']);
+
+    // ketika user akan keluar dari sistem(logout)
+    Route::post('/logout', [UserController::class, 'logout']);
 });
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
