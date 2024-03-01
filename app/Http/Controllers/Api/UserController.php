@@ -49,12 +49,9 @@ class UserController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        // Generate token
-        $token = $user->createToken('auth_token')->plainTextToken;
-
         return response()->json([
             'data' => $user,
-            'token' => $token
+            'message' => 'registrasi berhasil !'
         ], 201);
     }
 
@@ -75,18 +72,32 @@ class UserController extends Controller
             return response()->json(['errors' => $e->errors()], 422);
         }
 
+        // Cek apakah pengguna sudah terautentikasi
+        if (auth()->check()) {
+            return response()->json(['message' => 'User sudah terautentikasi.'], 422);
+        }
+
         // Cek login
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             // Berhasil login, dapatkan informasi pengguna
             $user = auth()->user();
 
-            // Berhasil login, generate token
-            $token = auth()->user()->createToken('auth_token')->plainTextToken;
+            // Cek apakah token sudah ada untuk pengguna ini
+            $existingToken = $user->tokens()->first();
 
-            return response()->json([
-                'data' => $user,
-                'token' => $token
-            ], 200);
+            if (!$existingToken) {
+                // Jika belum ada token, generate token
+                $token = $user->createToken('auth_token')->plainTextToken;
+
+                return response()->json([
+                    'data' => $user,
+                    'message' => 'Login berhasil!',
+                    'token' => $token
+                ], 200);
+            } else {
+                // Token sudah ada, berikan respons bahwa pengguna sudah terautentikasi
+                return response()->json(['message' => 'User sudah terautentikasi.'], 422);
+            }
         }
 
         // Gagal login
@@ -99,16 +110,17 @@ class UserController extends Controller
 
         if ($user) {
             return response()->json([
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                // tambahkan informasi lain jika diperlukan
+                'data' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                ],
+                'message' => 'Informasi pengguna saat ini',
             ], 200);
         } else {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
     }
-
 
     public function changePassword(Request $request)
     {
@@ -129,5 +141,19 @@ class UserController extends Controller
         ]);
 
         return response()->json(['message' => 'Password changed successfully'], 200);
+    }
+
+    public function logout()
+    {
+        $user = auth()->user();
+
+        if ($user) {
+            // Hapus token akses saat ini
+            $user->currentAccessToken()->delete();
+
+            return response()->json(['message' => 'Logout berhasil'], 200);
+        } else {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
     }
 }
