@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -18,7 +19,7 @@ class UserController extends Controller
         }
 
         // Validasi input
-        $request->validate([
+        $validator = Validator::make($request->all(),[
             'name' => 'required|string',
             'username' => 'required|string|unique:users,username',
             'email' => 'required|email|unique:users,email',
@@ -33,6 +34,11 @@ class UserController extends Controller
             'password.required' => 'Password harus diisi.',
             'password.min' => 'Password harus memiliki setidaknya :min karakter.',
         ]);
+
+        // Cek hasil validasi
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         // Buat pengguna baru
         $user = User::create([
