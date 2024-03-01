@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\TaskController;
+use App\Http\Controllers\Api\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +18,19 @@ use App\Http\Controllers\Api\TaskController;
 |
 */
 
+Route::post('/register', [UserController::class, 'register']);
+
+// Login
+Route::post('/login', [UserController::class, 'login']);
+
+
+// Informasi Pengguna Saat Ini
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/user', [UserController::class, 'currentUser']);
+
+    // Penggantian Kata Sandi
+    Route::post('/change-password', [UserController::class, 'changePassword']);
+});
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
