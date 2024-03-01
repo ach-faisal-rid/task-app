@@ -27,6 +27,9 @@ Route::post('/login', [UserController::class, 'login']);
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [UserController::class, 'currentUser']);
 
+    // ketika user ingin memperbaharui email, username, name
+    Route::patch('/user', [UserController::class, 'updateCurrentUser']);
+
     // Penggantian Kata Sandi
     Route::post('/change-password', [UserController::class, 'changePassword']);
 

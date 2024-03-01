@@ -122,6 +122,34 @@ class UserController extends Controller
         }
     }
 
+    public function updateCurrentUser(Request $request)
+    {
+        $user = auth()->user();
+
+        if ($user) {
+            // Validasi input jika diperlukan
+            $request->validate([
+                'name' => 'string',
+                'email' => 'email|unique:users,email,' . $user->id,
+                'username' => 'required|string|unique:users,username,' . $user->id,
+            ]);
+
+            // Perbarui informasi pengguna
+            $user->update([
+                'name' => $request->input('name', $user->name),
+                'email' => $request->input('email', $user->email),
+                'username' => $request->input('username', $user->username),
+            ]);
+
+            return response()->json([
+                'data' => $user,
+                'message' => 'Informasi pengguna berhasil diperbarui'
+            ], 200);
+        } else {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+    }
+
     public function changePassword(Request $request)
     {
         // Validasi input
@@ -140,7 +168,9 @@ class UserController extends Controller
             'password' => bcrypt($request->new_password),
         ]);
 
-        return response()->json(['message' => 'Password changed successfully'], 200);
+        return response()->json([
+            'message' => 'Password changed successfully'
+        ], 200);
     }
 
     public function logout()

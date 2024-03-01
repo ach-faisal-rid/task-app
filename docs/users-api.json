@@ -1,121 +1,416 @@
 {
-    "openapi": "3.0.0",
+    "openapi": "3.0.3",
     "info": {
-      "title": "User Management API",
-      "description": "API untuk pengelolaan pengguna",
-      "version": "1.0.0"
+        "title": "User API",
+        "description": "User API",
+        "version": "1.0.0"
     },
     "servers": [
-      {
-        "url": "http://localhost:8000"
-      }
+        {
+            "url": "http://localhost:8000"
+        }
     ],
     "paths": {
-      "/users": {
-        "get": {
-          "summary": "Mendapatkan daftar semua pengguna",
-          "responses": {
-            "200": {
-              "description": "Sukses mendapatkan daftar pengguna",
-              "content": {
-                "application/json": {
-                  "example": [
-                    {"id": 1, "name": "John Doe", "email": "john@example.com"},
-                    {"id": 2, "name": "Jane Doe", "email": "jane@example.com"}
-                  ]
+        "/api/register": {
+            "post": {
+                "description": "Register new user",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "faisal": {
+                                    "description": "Register user berhasil !",
+                                    "value": {
+                                        "username": "faisal",
+                                        "email": "faisalachmadridhani@gmail.com",
+                                        "password": "rahasia",
+                                        "name": "faisal achmad ridhani"
+                                    }
+                                }
+                            },
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "username"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "validationerror": {
+                                        "description": "Validation error",
+                                        "value": {
+                                            "errors": {
+                                                "username": [
+                                                    "username must not be blank",
+                                                    "username min 6 characters",
+                                                    "username sudah terdaftar"
+                                                ],
+                                                "name": [
+                                                    "username must not be blank",
+                                                    "username min 6 characters"
+                                                ],
+                                                "email":
+                                                [
+                                                    "email harus diisi",
+                                                    "Format email tidak valid",
+                                                    "Email sudah terdaftar"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success register user",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "success": {
+                                        "description": "Success register !",
+                                        "value": {
+                                            "data": {
+                                                "id": 1,
+                                                "username": "faisal",
+                                                "email": "faisalachmadridhani@gmail.com",
+                                                "name": "faisal achmad ridhani"
+                                            }
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "number"
+                                                },
+                                                "username": {
+                                                    "type": "string"
+                                                },
+                                                "email": {
+                                                    "type": "string"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-              }
             }
-          }
         },
-        "post": {
-          "summary": "Membuat pengguna baru",
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "example": {"name": "New User", "email": "newuser@example.com"}
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "Pengguna berhasil dibuat",
-              "content": {
-                "application/json": {
-                  "example": {"id": 3, "name": "New User", "email": "newuser@example.com"}
+        "/api/login": {
+            "post": {
+                "description": "Login user",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "validationerror": {
+                                        "description": "Validation error",
+                                        "value": {
+                                            "errors": {
+                                                "password": [
+                                                    "password must not be blank"
+                                                ],
+                                                "email":
+                                                [
+                                                    "email harus diisi",
+                                                    "Format email tidak valid",
+                                                    "Email sudah terdaftar"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Success login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "number"
+                                                },
+                                                "email": {
+                                                    "type": "string"
+                                                },
+                                                "username": {
+                                                    "type": "string"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "token": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-              }
             }
-          }
+        },
+        "/api/current": {
+            "get": {
+                "description": "Get current user",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success get current user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "number"
+                                                },
+                                                "email": {
+                                                    "type": "string"
+                                                },
+                                                "username": {
+                                                    "type": "string"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update current user",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Update current user",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success update user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "number"
+                                                },
+                                                "email": {
+                                                    "type": "string"
+                                                },
+                                                "username": {
+                                                    "type": "string"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/change-password": {
+            "post": {
+                "description": "Update password current user",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Update password current user",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success update user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "number"
+                                                },
+                                                "password": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "delete": {
+                "description": "Logout current user",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success logout user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "boolean"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
-      },
-      "/users/{id}": {
-        "get": {
-          "summary": "Mendapatkan informasi pengguna berdasarkan ID",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "description": "ID pengguna",
-              "schema": {"type": "integer"}
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Sukses mendapatkan informasi pengguna",
-              "content": {
-                "application/json": {
-                  "example": {"id": 1, "name": "John Doe", "email": "john@example.com"}
-                }
-              }
-            }
-          }
-        },
-        "put": {
-          "summary": "Memperbarui informasi pengguna berdasarkan ID",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "description": "ID pengguna",
-              "schema": {"type": "integer"}
-            }
-          ],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "example": {"name": "Updated User", "email": "updateduser@example.com"}
-              }
-            }
-          },
-          "responses": {
-            "200": {
-              "description": "Sukses memperbarui informasi pengguna",
-              "content": {
-                "application/json": {
-                  "example": {"id": 1, "name": "Updated User", "email": "updateduser@example.com"}
-                }
-              }
-            }
-          }
-        },
-        "delete": {
-          "summary": "Menghapus pengguna berdasarkan ID",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "description": "ID pengguna",
-              "schema": {"type": "integer"}
-            }
-          ],
-          "responses": {"204": {"description": "Sukses menghapus pengguna"}}
-        }
-      }
     }
-  }
+}

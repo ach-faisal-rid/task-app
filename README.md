@@ -1,9 +1,11 @@
 ini adalah sistem percobaan jadi masih akan terus di pelajari lagi
 
 untuk menangani auth
-    1. Endpoint /register diakses melalui metode POST untuk melakukan registrasi.
-    2. Endpoint /login diakses melalui metode POST untuk melakukan login.
-    3. Endpoint /user diakses melalui metode GET untuk mendapatkan informasi pengguna saat 
+1. Endpoint /register diakses melalui metode POST untuk melakukan registrasi.
+2. Endpoint /login diakses melalui metode POST untuk melakukan login.
+3. Endpoint /user diakses melalui metode GET untuk mendapatkan informasi pengguna saat ini
+4. Endpoint /logout diakses melalui metode POST untuk logout user
+
 
 ini. Route ini dilindungi oleh middleware auth:sanctum, yang menunjukkan bahwa pengguna harus sudah terautentikasi untuk mengaksesnya.
 Endpoint /change-password diakses melalui metode POST untuk mengganti kata sandi. Route ini juga dilindungi oleh middleware auth:sanctum.
