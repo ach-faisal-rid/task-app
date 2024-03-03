@@ -1,20 +1,19 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use App\Models\User;
 
 class UserController extends Controller
 {
-    public function register(Request $request)
-    {
+    public function register(Request $request) {
         if (!$request->filled(['name', 'email', 'username', 'password'])) {
             return response()->json(['message' => 'Semua field harus diisi.'], 422);
         }
@@ -38,7 +37,7 @@ class UserController extends Controller
 
         // Cek hasil validasi
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json(['errors' => $validator->errors()], 400);
         }
 
         // Buat pengguna baru
@@ -55,8 +54,7 @@ class UserController extends Controller
         ], 201);
     }
 
-    public function login(Request $request)
-    {
+    public function login(Request $request) {
         // Validasi input
         try {
             // Validasi input
@@ -68,8 +66,8 @@ class UserController extends Controller
                 'password.required' => 'Password harus diisi.',
             ]);
         } catch (ValidationException $e) {
-            // Tangani error validasi dan berikan respons dengan status 422 Unprocessable Entity
-            return response()->json(['errors' => $e->errors()], 422);
+            // Tangani error validasi dan berikan respons dengan status 400 Unprocessable Entity
+            return response()->json(['errors' => $e->errors()], 400);
         }
 
         // Cek apakah pengguna sudah terautentikasi
@@ -104,8 +102,7 @@ class UserController extends Controller
         return response()->json(['message' => 'Unauthorized'], 401);
     }
 
-    public function currentUser()
-    {
+    public function currentUser() {
         $user = auth()->user();
 
         if ($user) {
@@ -122,8 +119,7 @@ class UserController extends Controller
         }
     }
 
-    public function updateCurrentUser(Request $request)
-    {
+    public function updateCurrentUser(Request $request) {
         $user = auth()->user();
 
         if ($user) {
@@ -150,8 +146,7 @@ class UserController extends Controller
         }
     }
 
-    public function changePassword(Request $request)
-    {
+    public function changePassword(Request $request) {
         // Validasi input
         $request->validate([
             'current_password' => 'required',
@@ -173,8 +168,7 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function logout()
-    {
+    public function logout() {
         $user = auth()->user();
 
         if ($user) {

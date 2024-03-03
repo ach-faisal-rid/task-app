@@ -1,8 +1,8 @@
 {
     "openapi": "3.0.3",
     "info": {
-        "title": "User-API",
-        "description": "User API",
+        "title": "Tasks-API",
+        "description": "Tasks API",
         "version": "1.0.0"
     },
     "servers": [
@@ -65,24 +65,19 @@
                                         "value": {
                                             "errors": {
                                                 "username": [
-                                                    "username harus diisi",
-                                                    "username harus memiliki minimal 6 karakter",
+                                                    "username must not be blank",
+                                                    "username min 6 characters",
                                                     "username sudah terdaftar"
                                                 ],
                                                 "name": [
-                                                    "nama harus diisi"
+                                                    "username must not be blank",
+                                                    "username min 6 characters"
                                                 ],
                                                 "email":
                                                 [
                                                     "email harus diisi",
                                                     "Format email tidak valid",
                                                     "Email sudah terdaftar"
-                                                ],
-                                                "password":
-                                                [
-                                                    "password harus diisi",
-                                                    "Harus memiliki panjang minimal 8 karakter",
-                                                    "Harus ada kombinasi huruf besar dan kecil, angka, dan simbol"
                                                 ]
                                             }
                                         }
@@ -170,8 +165,7 @@
                                         "value": {
                                             "errors": {
                                                 "password": [
-                                                    "password harus diisi",
-                                                    "password tidak cocok coba lagi"
+                                                    "password must not be blank"
                                                 ],
                                                 "email":
                                                 [
@@ -224,7 +218,7 @@
                 }
             }
         },
-        "/api/auth/current": {
+        "/api/current": {
             "get": {
                 "description": "Get current user",
                 "parameters": [
@@ -234,82 +228,6 @@
                     }
                 ],
                 "responses": {
-                    "400": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "examples": {
-                                    "validationerror": {
-                                        "description": "Validation error",
-                                        "value": {
-                                            "errors": {
-                                                "token": [
-                                                    "Data yang Anda masukkan tidak valid"
-                                                ]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "examples": {
-                                    "validationerror": {
-                                        "description": "Validation error",
-                                        "value": {
-                                            "errors": {
-                                                "token": [
-                                                    "Token tidak valid atau Token telah kadaluarsa"
-                                                ]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "examples": {
-                                    "validationerror": {
-                                        "description": "Validation error",
-                                        "value": {
-                                            "errors": {
-                                                "token": [
-                                                    "Anda tidak memiliki hak akses"
-                                                ]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "examples": {
-                                    "validationerror": {
-                                        "description": "Validation error",
-                                        "value": {
-                                            "errors": {
-                                                "token": [
-                                                    "Terjadi kesalahan pada server"
-                                                ]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
                     "200": {
                         "description": "Success get current user",
                         "content": {
@@ -374,69 +292,6 @@
                     }
                 },
                 "responses": {
-                    "400": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "examples": {
-                                    "validationerror": {
-                                        "description": "Validation error",
-                                        "value": {
-                                            "errors": {
-                                                "name": [
-                                                    "terlalu pendek"
-                                                ],
-                                                "email": [
-                                                    "Tidak valid, sudah digunakan"
-                                                ],
-                                                "username": [
-                                                    "karakter yang tidak valid, sudah digunakan"
-                                                ]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "examples": {
-                                    "validationerror": {
-                                        "description": "Validation error",
-                                        "value": {
-                                            "errors": {
-                                                "pesan": [
-                                                    "Anda tidak berhak untuk mengubah informasi ini"
-                                                ]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "examples": {
-                                    "validationerror": {
-                                        "description": "Validation error",
-                                        "value": {
-                                            "errors": {
-                                                "pesan": [
-                                                    "Terjadi kesalahan pada server"
-                                                ]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
                     "200": {
                         "description": "Success update user",
                         "content": {
@@ -472,7 +327,7 @@
                 }
             }
         },
-        "/api/auth/change-password": {
+        "/api/change-password": {
             "post": {
                 "description": "Update password current user",
                 "parameters": [
@@ -497,65 +352,6 @@
                     }
                 },
                 "responses": {
-                    "400": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "examples": {
-                                    "validationerror": {
-                                        "description": "Validation error",
-                                        "value": {
-                                            "errors": {
-                                                "password": [
-                                                    "password harus diisi",
-                                                    "password tidak cocok coba lagi",
-                                                    "password baru tidak valid"
-                                                ]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "429": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "examples": {
-                                    "validationerror": {
-                                        "description": "Validation error",
-                                        "value": {
-                                            "errors": {
-                                                "password": [
-                                                    "telah mencapai batas jumlah perubahan"
-                                                ]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "examples": {
-                                    "validationerror": {
-                                        "description": "Validation error",
-                                        "value": {
-                                            "errors": {
-                                                "password": [
-                                                    "Terjadi kesalahan pada server"
-                                                ]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
                     "200": {
                         "description": "Success update user",
                         "content": {
@@ -595,45 +391,6 @@
                     }
                 ],
                 "responses": {
-                    "401": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "examples": {
-                                    "validationerror": {
-                                        "description": "Validation error",
-                                        "value": {
-                                            "errors": {
-                                                "session": [
-                                                    "Sesi Anda telah kedaluwarsa. silahkan login !",
-                                                    "Token tidak valid"
-                                                ]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "examples": {
-                                    "validationerror": {
-                                        "description": "Validation error",
-                                        "value": {
-                                            "errors": {
-                                                "password": [
-                                                    "Terjadi kesalahan pada server"
-                                                ]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
                     "200": {
                         "description": "Success logout user",
                         "content": {
